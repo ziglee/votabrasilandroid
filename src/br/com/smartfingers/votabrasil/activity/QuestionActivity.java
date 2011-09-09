@@ -6,13 +6,16 @@ import java.util.Locale;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectView;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
 import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
@@ -20,6 +23,7 @@ import br.com.smartfingers.votabrasil.task.PostVoteTask;
 
 public class QuestionActivity extends RoboActivity implements NextQuestionFetchable {
 
+	private static final String LOGTAG = QuestionActivity.class.getName();
 	public static final String EXTRA_QUESTION = "EXTRA_QUESTION";
 	
 	@InjectView(R.id.title_txt)
@@ -50,6 +54,9 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	@InjectExtra(EXTRA_QUESTION)
 	private Question question;
 	
+	private ProgressDialog fetchingNextDialog;
+	private ProgressDialog postingVoteDialog;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +74,12 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				} else {
 					question.yes++;
 				}
+				
+				try{
+					postingVoteDialog = ProgressDialog.show(QuestionActivity.this, "", "Enviando seu voto...");
+				} catch (Exception e) {
+					Log.e(LOGTAG, "Error showing progress dialog", e);
+				}
 				new PostVoteTask(QuestionActivity.this, question.id).execute("yes");
 			}
 		});
@@ -80,6 +93,12 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				} else {
 					question.no++;
 				}
+
+				try{
+					postingVoteDialog = ProgressDialog.show(QuestionActivity.this, "", "Enviando seu voto...");
+				} catch (Exception e) {
+					Log.e(LOGTAG, "Error showing progress dialog", e);
+				}
 				new PostVoteTask(QuestionActivity.this, question.id).execute("no");
 			}
 		});
@@ -87,6 +106,11 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
         nextBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				try{
+					fetchingNextDialog = ProgressDialog.show(QuestionActivity.this, "", "Buscando próxima enquete");
+				} catch (Exception e) {
+					Log.e(LOGTAG, "Error showing progress dialog", e);
+				}
 				new FetchNextQuestionTask(QuestionActivity.this).execute();
 			}
 		});
@@ -97,13 +121,33 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
     }
 	
 	public void executeAfterFetchNextQuestion(Question result) {
-		Intent intent = new Intent(this, QuestionActivity.class);
-		intent.putExtra(QuestionActivity.EXTRA_QUESTION, result);
-		startActivity(intent);
-		finish();
+		try{
+			if (fetchingNextDialog != null) {
+				fetchingNextDialog.dismiss();
+			}
+		} catch (Exception e) {
+			Log.e(LOGTAG, "Error dismissing progress dialog", e);
+		}
+		
+		if (result != null) {
+			Intent intent = new Intent(this, QuestionActivity.class);
+			intent.putExtra(QuestionActivity.EXTRA_QUESTION, result);
+			startActivity(intent);
+			finish();
+		} else {
+			Toast.makeText(this, "Todas as enquetes foram respondidas", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	public void executeAfterPostVote() {
+		try{
+			if (postingVoteDialog != null) {
+				postingVoteDialog.dismiss();
+			}
+		} catch (Exception e) {
+			Log.e(LOGTAG, "Error dismissing progress dialog", e);
+		}
+		
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 		nf.setMaximumFractionDigits(1);
 		
@@ -128,5 +172,6 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		resultFrame.setVisibility(View.VISIBLE);
 		yesBtn.setVisibility(View.GONE);
     	noBtn.setVisibility(View.GONE);
+    	nextBtn.setVisibility(View.VISIBLE);
 	}
 }

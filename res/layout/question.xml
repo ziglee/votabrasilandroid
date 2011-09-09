@@ -144,6 +144,7 @@
 		    android:layout_margin="10dp" 
 		    android:text="Proxima"
 		    android:layout_weight="1"
+		    android:visibility="gone"
 	    />
     </LinearLayout>
 </LinearLayout>

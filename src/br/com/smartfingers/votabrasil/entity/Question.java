@@ -18,22 +18,28 @@ public class Question implements Serializable {
 	public String answer;
 	
 	public static Question fromResponse(JSONObject jsonObject)  throws JSONException {
-		JSONObject jsonValue = jsonObject.getJSONObject("question");
 		Question entity = new Question();
-		entity.title = jsonValue.getString("title");
-		entity.content = jsonValue.getString("content");
-		entity.id = jsonValue.getLong("id");
+		entity.title = jsonObject.getString("title");
+		entity.id = jsonObject.getLong("id");
 		
-		if (jsonValue.has("answer")) {
-			entity.answer = jsonValue.getString("answer");
+		if (jsonObject.has("answer")) {
+			entity.answer = jsonObject.getString("answer");
 		}
 		
-		if (jsonValue.has("yes")) {
-			entity.yes = jsonValue.getLong("yes");
+		if (jsonObject.has("content")) {
+			entity.content = jsonObject.getString("content");
 		}
 		
-		if (jsonValue.has("no")) {
-			entity.no = jsonValue.getLong("no");
+		if (jsonObject.has("yes")) {
+			entity.yes = jsonObject.getLong("yes");
+		} else {
+			entity.yes = 0L;
+		}
+		
+		if (jsonObject.has("no")) {
+			entity.no = jsonObject.getLong("no");
+		} else {
+			entity.no = 0L;
 		}
 		
 		return entity;
