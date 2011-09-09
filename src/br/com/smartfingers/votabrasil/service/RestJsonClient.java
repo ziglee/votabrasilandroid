@@ -25,8 +25,8 @@ public class RestJsonClient {
 	public static JSONObject connect(String url) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpParams params = httpclient.getParams();
-		HttpConnectionParams.setConnectionTimeout(params, 9000);
-		HttpConnectionParams.setSoTimeout(params, 6000);
+		HttpConnectionParams.setConnectionTimeout(params, 0);
+		HttpConnectionParams.setSoTimeout(params, 0);
 
 		HttpGet httpget = new HttpGet(url);
 		HttpResponse response;
@@ -45,13 +45,13 @@ public class RestJsonClient {
 
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-			Log.e("SpreadSong:" + RestJsonClient.class.getSimpleName(), e.getMessage());
+			Log.e("VotaBrasil:" + RestJsonClient.class.getSimpleName(), e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-			Log.e("SpreadSong:" + RestJsonClient.class.getSimpleName(), e.getMessage());
+			Log.e("VotaBrasil:" + RestJsonClient.class.getSimpleName(), e.getMessage());
 		} catch (JSONException e) {
 			e.printStackTrace();
-			Log.e("SpreadSong:" + RestJsonClient.class.getSimpleName(), e.getMessage());
+			Log.e("VotaBrasil:" + RestJsonClient.class.getSimpleName(), e.getMessage());
 		}
 
 		return json;

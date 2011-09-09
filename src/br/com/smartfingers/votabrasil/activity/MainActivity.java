@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import br.com.smartfingers.votabrasil.R;
+import br.com.smartfingers.votabrasil.entity.Question;
+import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
 
-public class MainActivity extends RoboActivity {
+public class MainActivity extends RoboActivity implements NextQuestionFetchable {
 	
 	@InjectView(R.id.vote_btn)
 	private Button voteBtn;
@@ -22,8 +24,14 @@ public class MainActivity extends RoboActivity {
         voteBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(MainActivity.this, VoteActivity.class));
+				new FetchNextQuestionTask(MainActivity.this).execute();
 			}
 		});
     }
+
+	public void executeAfterFetchNextQuestion(Question result) {
+		Intent intent = new Intent(this, QuestionActivity.class);
+		intent.putExtra(QuestionActivity.EXTRA_QUESTION, result);
+		startActivity(intent);
+	}
 }
