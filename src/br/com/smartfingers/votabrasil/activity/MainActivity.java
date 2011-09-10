@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
 import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
+import br.com.smartfingers.votabrasil.task.FetchVotesCountTask;
 
 public class MainActivity extends RoboActivity implements NextQuestionFetchable {
 	
@@ -22,6 +25,10 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 	private Button voteBtn;
 	@InjectView(R.id.list_btn)
 	private Button listBtn;
+	@InjectView(R.id.count_txt)
+	private TextView countTxt;
+	@InjectView(R.id.logo)
+	private ImageView logo;
 	
 	private ProgressDialog fetchingNextDialog;
 	
@@ -48,7 +55,22 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 				startActivity(new Intent(MainActivity.this, QuestionListActivity.class));
 			}
         });
+        
+        logo.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				countTxt.setText("Computando votos...");
+				new FetchVotesCountTask(MainActivity.this).execute();
+			}
+        });
     }
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		countTxt.setText("Computando votos...");
+		new FetchVotesCountTask(this).execute();
+	}
 
 	public void executeAfterFetchNextQuestion(Question result) {
 		try{
@@ -66,5 +88,9 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 		} else {
 			Toast.makeText(this, "Todas as enquetes foram respondidas", Toast.LENGTH_LONG).show();
 		}
+	}
+
+	public void executeAfterPostVote(Long count) {
+		countTxt.setText(Long.toString(count) + " votos");
 	}
 }

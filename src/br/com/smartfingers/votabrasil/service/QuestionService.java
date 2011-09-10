@@ -80,4 +80,15 @@ public class QuestionService {
 		}
 		return null;
 	}
+
+	public static Long getVotesCount() {
+		try{
+			String url = "http://votabrasilweb.appspot.com/rest/vote/count";
+			JSONObject object = RestJsonClient.connect(url);
+			return object.getLong("count");
+        }catch (JSONException e){
+        	Log.e("VotaBrasil", "Error finding next question", e);
+		}
+        return 0L;
+	}
 }

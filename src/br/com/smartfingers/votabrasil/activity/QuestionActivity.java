@@ -114,11 +114,15 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				new FetchNextQuestionTask(QuestionActivity.this).execute();
 			}
 		});
-        
-        if(question.answer != null) {
+    }
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		if(question.answer != null) {
         	executeAfterPostVote();
         }
-    }
+	}
 	
 	public void executeAfterFetchNextQuestion(Question result) {
 		try{

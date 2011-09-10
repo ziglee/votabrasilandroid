@@ -15,9 +15,10 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:text="Você é a favor do projeto que inclui os atos de corrupção na Lei dos Crimes Hediondos, que aplica punições mais severas aos condenados?"
-	    android:background="#AAA"
+	    android:background="@drawable/box"
 	    android:padding="10dp"
 	    android:id="@+id/content_txt"
+	    android:layout_margin="10dp"
 	/>
 	<LinearLayout 
 		android:id="@+id/result_layout"
