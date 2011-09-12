@@ -42,6 +42,12 @@ public class Question implements Serializable {
 			entity.no = 0L;
 		}
 		
+		if (jsonObject.has("index")) {
+			entity.index = jsonObject.getInt("index");
+		} else {
+			entity.index = 0;
+		}
+		
 		return entity;
 	}
 }

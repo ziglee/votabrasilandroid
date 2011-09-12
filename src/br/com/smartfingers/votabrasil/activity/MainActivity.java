@@ -10,12 +10,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.com.smartfingers.votabrasil.MyApplication;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
 import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
 import br.com.smartfingers.votabrasil.task.FetchVotesCountTask;
+
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends RoboActivity implements NextQuestionFetchable {
 	
@@ -29,6 +34,8 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 	private TextView countTxt;
 	@InjectView(R.id.logo)
 	private ImageView logo;
+	@InjectView(R.id.advertising_banner_view)
+	private LinearLayout adViewContainer;
 	
 	private ProgressDialog fetchingNextDialog;
 	
@@ -63,6 +70,10 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 				new FetchVotesCountTask(MainActivity.this).execute();
 			}
         });
+
+		AdView adView = new AdView(this, AdSize.BANNER, MyApplication.ADMOB_ID);
+		adViewContainer.addView(adView);
+		adView.loadAd(MyApplication.getAdRequest());
     }
 	
 	@Override

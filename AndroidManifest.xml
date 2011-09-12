@@ -10,8 +10,8 @@
 		android:normalScreens="true" android:largeScreens="true"
 		android:anyDensity="true" />
     
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 
     <application 
     	android:icon="@drawable/icon" 
@@ -28,5 +28,6 @@
         <activity android:name=".activity.QuestionActivity"
         	android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".activity.QuestionListActivity"/>
+		<activity android:name="com.google.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
     </application>
 </manifest>

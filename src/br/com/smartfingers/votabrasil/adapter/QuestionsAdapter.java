@@ -1,5 +1,8 @@
 package br.com.smartfingers.votabrasil.adapter;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +17,7 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
     private LayoutInflater mInflater;
     
 	public QuestionsAdapter(Context context, Question[] objects) {
-		super(context, R.layout.template_list_item, objects);
+		super(context, R.layout.list_item, objects);
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
@@ -23,7 +26,7 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
 		View row;
 		
 		if (null == convertView) {
-			row = mInflater.inflate(R.layout.template_list_item, null);
+			row = mInflater.inflate(R.layout.list_item, null);
 		} else {
 			row = convertView;
 		}
@@ -33,20 +36,37 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
 		TextView center = (TextView) row.findViewById(R.id.center);
 		center.setText(item.title);
 		
-		TextView bottom = (TextView) row.findViewById(R.id.bottom);
+		long total = item.yes + item.no;
+    	float yes = 0;
+    	float no = 0;
+    	if (total != 0) {
+	    	yes = (float) item.yes / total;
+	    	no = (float) item.no / total;
+    	}
+
+    	NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
+		nf.setMaximumFractionDigits(0);
 		
-		String bottomStr = "Sua resposta: ";
+		TextView percentYesTxt = (TextView) row.findViewById(R.id.percent_yes_txt);
+		percentYesTxt.setText(nf.format(yes * 100) + "%");
+		
+		TextView percentNoTxt = (TextView) row.findViewById(R.id.percent_no_txt);
+		percentNoTxt.setText(nf.format(no * 100) + "%");
+		
+		TextView bottomRight = (TextView) row.findViewById(R.id.bottom_right);
+		
+		String bottomStr = "Você votou ";
 		String answer = item.answer;
 		if (answer != null) {
 			if(answer.equalsIgnoreCase("yes")) {
-				bottomStr += "Sim";
+				bottomStr += "'Sim'";
 			} else {
-				bottomStr += "Não";
+				bottomStr += "'Não'";
 			}
 		} else {
-			bottomStr += "???";
+			bottomStr = "Você não votou";
 		}
-		bottom.setText(bottomStr);
+		bottomRight.setText(bottomStr);
 		
 		return row;
 	}

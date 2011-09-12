@@ -62,7 +62,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
         super.onCreate(savedInstanceState);
         setContentView(R.layout.question);
         
-        titleTxt.setText(question.title);
+        resultFrame.setVisibility(View.GONE);
+        titleTxt.setText(question.index + " - " + question.title);
 		contentTxt.setText(question.content);
         
         yesBtn.setOnClickListener(new OnClickListener() {
