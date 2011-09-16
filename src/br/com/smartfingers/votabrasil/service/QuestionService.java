@@ -1,94 +1,72 @@
 package br.com.smartfingers.votabrasil.service;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
 import br.com.smartfingers.votabrasil.entity.Question;
 
 public class QuestionService {
 
-	public static Question getNextQuestion(String uuid) {
-		try{
-			String url = "http://votabrasilweb.appspot.com/rest/question/next/" + uuid;
-			JSONObject object = RestJsonClient.connect(url);
-	        Question entity = Question.fromResponse(object.getJSONObject("question"));
-	        
-	        if (entity.yes == null) {
-	        	entity.yes = 0L;
-	        }
-	        
-	        if (entity.no == null) {
-	        	entity.no = 0L;
-	        }
-			return entity;
-        }catch (JSONException e){
-        	Log.e("VotaBrasil", "Error finding next question", e);
-		}
-        return null;
-	}
-
-	public static Question postVote(String uuid, Long questionId, String answer) {
-		try{
-			StringBuilder url = new StringBuilder("http://votabrasilweb.appspot.com/rest/vote");
-			url.append("/" + questionId);
-			url.append("/" + uuid);
-			url.append("/" + answer);
-			JSONObject object = RestJsonClient.connect(url.toString());
-	        return Question.fromResponse(object);
-        }catch (JSONException e){
-        	Log.e("VotaBrasil", "Error finding next question", e);
-		}
-        return null;
-	}
-
-	public static Question[] getQuestions(String uuid) {
-		String url = "http://votabrasilweb.appspot.com/rest/question/titles/" + uuid;
+	private static final String BASE_URL = "http://votabrasilweb.appspot.com/rest";
+	
+	public static Question getNextQuestion(String uuid) throws JSONException, ClientProtocolException, IOException {
+		String url = BASE_URL + "/question/next/" + uuid;
 		JSONObject object = RestJsonClient.connect(url);
-		try {
-			JSONArray records = object.getJSONArray("records");
-			int length = records.length();
-			Question[] questions = new Question[length];
-			for (int x = 0; x < length; x++) {
-				questions[x] = Question.fromResponse(records.getJSONObject(x));
-			}
-			return questions;
-		} catch (JSONException e) {
-			Log.e("VotaBrasil", "Error fetching questions", e);
-		}
+        Question entity = Question.fromResponse(object.getJSONObject("question"));
         
-		return new Question[0];
+        if (entity.yes == null) {
+        	entity.yes = 0L;
+        }
+        
+        if (entity.no == null) {
+        	entity.no = 0L;
+        }
+		return entity;
 	}
 
-	public static Question getQuestionById(Long id, String uuid) {
-		try{
-			String url = "http://votabrasilweb.appspot.com/rest/question/"+ id +"/" + uuid;
-			JSONObject object = RestJsonClient.connect(url);
-	        Question entity = Question.fromResponse(object);
-	        
-	        if (entity.yes == null) {
-	        	entity.yes = 0L;
-	        }
-	        
-	        if (entity.no == null) {
-	        	entity.no = 0L;
-	        }
-			return entity;
-        }catch (JSONException e){
-        	Log.e("VotaBrasil", "Error finding next question", e);
-		}
-		return null;
+	public static Boolean postVote(String uuid, Long questionId, String answer) throws ClientProtocolException, JSONException, IOException {
+		StringBuilder url = new StringBuilder(BASE_URL + "/vote");
+		url.append("/" + questionId);
+		url.append("/" + uuid);
+		url.append("/" + answer);
+		JSONObject object = RestJsonClient.connect(url.toString());
+        return object.getBoolean("success");
 	}
 
-	public static Long getVotesCount() {
-		try{
-			String url = "http://votabrasilweb.appspot.com/rest/vote/count";
-			JSONObject object = RestJsonClient.connect(url);
-			return object.getLong("count");
-        }catch (JSONException e){
-        	Log.e("VotaBrasil", "Error finding next question", e);
+	public static Question[] getQuestions(String uuid) throws ClientProtocolException, JSONException, IOException {
+		String url = BASE_URL + "/question/titles/" + uuid;
+		JSONObject object = RestJsonClient.connect(url);
+		JSONArray records = object.getJSONArray("records");
+		int length = records.length();
+		Question[] questions = new Question[length];
+		for (int x = 0; x < length; x++) {
+			questions[x] = Question.fromResponse(records.getJSONObject(x));
 		}
-        return 0L;
+		return questions;
+	}
+
+	public static Question getQuestionById(Long id, String uuid) throws ClientProtocolException, JSONException, IOException {
+		String url = BASE_URL + "/question/"+ id +"/" + uuid;
+		JSONObject object = RestJsonClient.connect(url);
+        Question entity = Question.fromResponse(object);
+        
+        if (entity.yes == null) {
+        	entity.yes = 0L;
+        }
+        
+        if (entity.no == null) {
+        	entity.no = 0L;
+        }
+		return entity;
+	}
+
+	public static Long getVotesCount() throws ClientProtocolException, JSONException, IOException {
+		String url = BASE_URL + "/vote/count";
+		JSONObject object = RestJsonClient.connect(url);
+		return object.getLong("count");
 	}
 }

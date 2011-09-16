@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.adapter.QuestionsAdapter;
 import br.com.smartfingers.votabrasil.entity.Question;
@@ -52,20 +53,33 @@ public class QuestionListActivity extends RoboListActivity {
 		new FetchQuestionByIdTask(this).execute(question.id);
 	}
 	
-	public void executeAfterFetchQuestions(Question[] result) {
-		this.result = result;
+	public void executeAfterFetchQuestions(Question[] result, Exception exception) {
+		if(exception != null) {
+			Log.e(LOGTAG, "Error fetching questions", exception);
+			Toast.makeText(this, "Erro ao listar questionários", Toast.LENGTH_LONG).show();
+			this.result = new Question[0];
+		} else {
+			this.result = result;
+		}
+		
 		setListAdapter(new QuestionsAdapter(this, this.result));
 		loadingLayout.setVisibility(View.GONE);
 		getListView().setVisibility(View.VISIBLE);
 	}
 
-	public void executeAfterFetchQuestionById(Question question) {
+	public void executeAfterFetchQuestionById(Question question, Exception exception) {
 		try{
 			if (fetchingNextDialog != null) {
 				fetchingNextDialog.dismiss();
 			}
 		} catch (Exception e) {
 			Log.e(LOGTAG, "Error dismissing progress dialog", e);
+		}
+		
+		if(exception != null) {
+			Log.e(LOGTAG, "Error fetching question by id", exception);
+			Toast.makeText(this, "Erro ao buscar questionário", Toast.LENGTH_LONG).show();
+			return;
 		}
 		
 		Intent intent = new Intent(this, QuestionActivity.class);

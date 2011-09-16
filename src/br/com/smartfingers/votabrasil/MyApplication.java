@@ -6,6 +6,7 @@ import java.util.UUID;
 import roboguice.application.RoboApplication;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Typeface;
 
 import com.google.ads.AdRequest;
 import com.google.inject.Module;
@@ -18,6 +19,8 @@ public class MyApplication extends RoboApplication {
 	public static final String PREF_UUID = "UUID";
 	
 	public static String uuid;
+	public static Typeface fontBold;
+	public static Typeface fontDefault;
 
 	@Override
 	protected void addApplicationModules(List<Module> modules) {
@@ -27,6 +30,9 @@ public class MyApplication extends RoboApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		fontBold = Typeface.createFromAsset(this.getAssets(), "fonts/fradmcn.ttf");
+		fontDefault = Typeface.createFromAsset(this.getAssets(), "fonts/framdcn.ttf");
 		
 		SharedPreferences pref = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
 		

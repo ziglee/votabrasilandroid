@@ -7,6 +7,7 @@ import br.com.smartfingers.votabrasil.service.QuestionService;
 public class FetchVotesCountTask extends AsyncTask<String, String, Long> {
 
 	private MainActivity activity;
+	private Exception exception;
 	
 	public FetchVotesCountTask(MainActivity activity) {
 		this.activity = activity;
@@ -14,11 +15,16 @@ public class FetchVotesCountTask extends AsyncTask<String, String, Long> {
 	
 	@Override
 	protected Long doInBackground(String... params) {
-		return QuestionService.getVotesCount();
+		try {
+			return QuestionService.getVotesCount();
+		} catch (Exception e) {
+			exception = e;
+		}
+		return 0L;
 	}
 	
 	@Override
 	protected void onPostExecute(Long result) {
-		activity.executeAfterPostVote(result);
+		activity.executeAfterFetchVotesCount(result, exception);
 	}
 }

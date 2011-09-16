@@ -9,6 +9,7 @@ import br.com.smartfingers.votabrasil.service.QuestionService;
 public class FetchQuestionByIdTask extends AsyncTask<Long, String, Question> {
 
 	private QuestionListActivity activity;
+	private Exception exception;
 	
 	public FetchQuestionByIdTask(QuestionListActivity activity) {
 		this.activity = activity;
@@ -16,11 +17,16 @@ public class FetchQuestionByIdTask extends AsyncTask<Long, String, Question> {
 	
 	@Override
 	protected Question doInBackground(Long... ids) {
-		return QuestionService.getQuestionById(ids[0], MyApplication.uuid);
+		try {
+			return QuestionService.getQuestionById(ids[0], MyApplication.uuid);
+		} catch (Exception e) {
+			exception = e;
+		}
+		return null;
 	}
 	
 	@Override
 	protected void onPostExecute(Question result) {
-		activity.executeAfterFetchQuestionById(result);
+		activity.executeAfterFetchQuestionById(result, exception);
 	}
 }

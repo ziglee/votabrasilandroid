@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +25,17 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 	private static final String LOGTAG = MainActivity.class.getName();
 	
 	@InjectView(R.id.vote_btn)
-	private Button voteBtn;
+	private LinearLayout voteBtn;
+	@InjectView(R.id.vote_label)
+	private TextView voteLabel;
 	@InjectView(R.id.list_btn)
-	private Button listBtn;
+	private LinearLayout listBtn;
+	@InjectView(R.id.list_label)
+	private TextView listLabel;
+	@InjectView(R.id.intro_txt)
+	private TextView introTxt;
 	@InjectView(R.id.count_txt)
 	private TextView countTxt;
-	@InjectView(R.id.logo)
-	private ImageView logo;
 	@InjectView(R.id.advertising_banner_view)
 	private LinearLayout adViewContainer;
 	
@@ -43,6 +45,11 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        introTxt.setTypeface(MyApplication.fontBold);
+        countTxt.setTypeface(MyApplication.fontDefault);
+        voteLabel.setTypeface(MyApplication.fontDefault);
+        listLabel.setTypeface(MyApplication.fontDefault);
         
         voteBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -63,14 +70,6 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 			}
         });
         
-        logo.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				countTxt.setText("Computando votos...");
-				new FetchVotesCountTask(MainActivity.this).execute();
-			}
-        });
-
 		AdView adView = new AdView(this, AdSize.BANNER, MyApplication.ADMOB_ID);
 		adViewContainer.addView(adView);
 		adView.loadAd(MyApplication.getAdRequest());
@@ -83,13 +82,19 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 		new FetchVotesCountTask(this).execute();
 	}
 
-	public void executeAfterFetchNextQuestion(Question result) {
+	public void executeAfterFetchNextQuestion(Question result, Exception exception) {
 		try{
 			if (fetchingNextDialog != null) {
 				fetchingNextDialog.dismiss();
 			}
 		} catch (Exception e) {
 			Log.e(LOGTAG, "Error dismissing progress dialog", e);
+		}
+		
+		if(exception != null) {
+			Log.e(LOGTAG, "Error fetching next question", exception);
+			Toast.makeText(this, "Erro ao buscar próxima enquete", Toast.LENGTH_LONG).show();
+			return;
 		}
 		
 		if (result != null) {
@@ -101,7 +106,13 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 		}
 	}
 
-	public void executeAfterPostVote(Long count) {
+	public void executeAfterFetchVotesCount(Long count, Exception exception) {
+		if(exception != null) {
+			Log.e(LOGTAG, "Error fetching votes count", exception);
+			countTxt.setText("--- votos");
+			return;
+		}
+		
 		countTxt.setText(Long.toString(count) + " votos");
 	}
 }

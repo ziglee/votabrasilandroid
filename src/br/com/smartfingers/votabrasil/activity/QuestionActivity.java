@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.com.smartfingers.votabrasil.MyApplication;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
 import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
@@ -26,8 +27,6 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	private static final String LOGTAG = QuestionActivity.class.getName();
 	public static final String EXTRA_QUESTION = "EXTRA_QUESTION";
 	
-	@InjectView(R.id.title_txt)
-	private TextView titleTxt;
 	@InjectView(R.id.content_txt)
 	private TextView contentTxt;
 	@InjectView(R.id.yes_btn)
@@ -63,9 +62,9 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
         setContentView(R.layout.question);
         
         resultFrame.setVisibility(View.GONE);
-        titleTxt.setText(question.index + " - " + question.title);
-		contentTxt.setText(question.content);
-        
+		contentTxt.setText(question.content.toUpperCase());
+		contentTxt.setTypeface(MyApplication.fontDefault);
+		
         yesBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -121,17 +120,23 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	protected void onStart() {
 		super.onStart();
 		if(question.answer != null) {
-        	executeAfterPostVote();
+        	executeAfterPostVote(true, null);
         }
 	}
 	
-	public void executeAfterFetchNextQuestion(Question result) {
+	public void executeAfterFetchNextQuestion(Question result, Exception exception) {
 		try{
 			if (fetchingNextDialog != null) {
 				fetchingNextDialog.dismiss();
 			}
 		} catch (Exception e) {
 			Log.e(LOGTAG, "Error dismissing progress dialog", e);
+		}
+		
+		if(exception != null) {
+			Log.e(LOGTAG, "Error fetching next question", exception);
+			Toast.makeText(this, "Erro ao buscar próxima enquete", Toast.LENGTH_LONG).show();
+			return;
 		}
 		
 		if (result != null) {
@@ -144,13 +149,24 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		}
 	}
 
-	public void executeAfterPostVote() {
-		try{
+	public void executeAfterPostVote(Boolean result, Exception exception) {
+		try {
 			if (postingVoteDialog != null) {
 				postingVoteDialog.dismiss();
 			}
 		} catch (Exception e) {
 			Log.e(LOGTAG, "Error dismissing progress dialog", e);
+		}
+		
+		if (!result.booleanValue()) {
+			Toast.makeText(this, "Erro ao computar seu voto", Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		if (exception != null) {
+			Log.e(LOGTAG, "Error posting vote", exception);
+			Toast.makeText(this, "Erro ao computar seu voto", Toast.LENGTH_LONG).show();
+			return;
 		}
 		
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
