@@ -138,11 +138,14 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 	private ImageView voteMenu;
 	@InjectView(R.id.questions_menu)
 	private ImageView questionsMenu;
+	@InjectView(R.id.info_menu)
+	private ImageView infoMenu;
 	
 	private void setupMenu() {
 		homeMenu.setVisibility(View.GONE);
 		voteMenu.setOnClickListener(voteOnClickListener);
 		questionsMenu.setOnClickListener(questionsOnClickListener);
+		infoMenu.setOnClickListener(getAboutOnClickListener(this));
 	}
 	
 	public static OnClickListener getHomeOnClickListener(final Activity activity) {
@@ -159,6 +162,15 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 			@Override
 			public void onClick(View v) {
 				activity.startActivity(new Intent(activity, QuestionListActivity.class));
+			}
+        };
+	}
+	
+	public static OnClickListener getAboutOnClickListener(final Activity activity) {
+		return new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				activity.startActivity(new Intent(activity, AboutActivity.class));
 			}
         };
 	}

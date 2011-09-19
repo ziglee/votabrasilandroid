@@ -47,7 +47,7 @@
 		    android:layout_weight="1"
 		    android:orientation="vertical"
 		    android:gravity="center"
-		    android:background="#CCC">
+		    android:background="@drawable/gray_grad">
 		    <LinearLayout
 		    	android:id="@+id/chart_layout"
 		    	android:layout_width="fill_parent"
@@ -97,26 +97,44 @@
 			android:layout_height="wrap_content"
 			android:background="#AAA"
 			android:orientation="horizontal"
-			android:padding="5dp">
+			android:padding="5dp"
+			android:gravity="bottom">
 			<TextView 
-				android:id="@+id/you_voted_txt"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="Você votou SIM"
-	    		android:textSize="14dp"
-	    		android:textStyle="bold"
+				android:id="@+id/you_voted_prefix"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:text="Você votou "
+	    		android:textSize="16dp"
 	    		android:textColor="#FFF"
+	    		android:gravity="bottom|left"
+			/>
+			<TextView 
+				android:id="@+id/you_voted_value"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:gravity="bottom|left"
+				android:layout_weight="1"
+				android:text="SIM"
+	    		android:textSize="16dp"
+	    		android:textColor="#333"
 			/>
 			<TextView
-				android:id="@+id/total_votes_txt" 
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
+				android:id="@+id/total_votes_value" 
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
 				android:layout_weight="1"
-				android:gravity="right"
-				android:text="1297 votos"
-	    		android:textSize="14dp"
-	    		android:textStyle="bold"
+				android:gravity="bottom|right"
+				android:text="1297"
+	    		android:textSize="16dp"
+	    		android:textColor="#333"
+			/>
+			<TextView
+				android:id="@+id/total_votes_suffix" 
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:gravity="bottom|right"
+				android:text=" votos"
+	    		android:textSize="16dp"
 	    		android:textColor="#FFF"
 			/>
 		</LinearLayout>
@@ -129,57 +147,62 @@
 	    android:background="#FFF">
 	</LinearLayout>
 	
-    <LinearLayout 
-    	android:id="@+id/yes_no_bars" 
-    	android:orientation="vertical"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content">
+	<ScrollView
+		android:id="@+id/yes_no_bars" 
+		android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1">
 	    <LinearLayout 
-	    	android:orientation="horizontal"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:background="@drawable/gray_grad"
-		    android:gravity="center_vertical|left">
-		    <CheckBox
-		    	android:id="@+id/yes_btn"
-		    	android:layout_width="wrap_content"
-		    	android:layout_height="wrap_content"
-		    	android:layout_margin="12dp"/>
-		    <TextView
-		    	android:id="@+id/yes_btn_label" 
-		    	android:layout_width="wrap_content"
-		    	android:layout_height="wrap_content"
-		    	android:text="Sim"
-		    	android:textSize="22dp"
-		    	android:textColor="#333"/>
-	    </LinearLayout>
-	    
-		<LinearLayout 
 	    	android:orientation="vertical"
 		    android:layout_width="fill_parent"
-		    android:layout_height="2dp"
-		    android:background="#FFF">
-		</LinearLayout>
-	
-	    <LinearLayout 
-	    	android:orientation="horizontal"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:background="@drawable/gray_grad"
-		    android:gravity="center_vertical|left">
-		    <CheckBox
-		    	android:id="@+id/no_btn"
-		    	android:layout_width="wrap_content"
-		    	android:layout_height="wrap_content"
-		    	android:layout_margin="12dp"/>
-		    <TextView 
-		    	android:id="@+id/no_btn_label"
-		    	android:layout_width="wrap_content"
-		    	android:layout_height="wrap_content"
-		    	android:text="Não"
-		    	android:textSize="22dp"
-		    	android:textColor="#333"/>
+		    android:layout_height="fill_parent">
+		    <LinearLayout 
+		    	android:orientation="horizontal"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/gray_grad"
+			    android:gravity="center_vertical|left">
+			    <CheckBox
+			    	android:id="@+id/yes_btn"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:layout_margin="12dp"/>
+			    <TextView
+			    	android:id="@+id/yes_btn_label" 
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="Sim"
+			    	android:textSize="22dp"
+			    	android:textColor="#333"/>
+		    </LinearLayout>
+		    
+			<LinearLayout 
+		    	android:orientation="vertical"
+			    android:layout_width="fill_parent"
+			    android:layout_height="2dp"
+			    android:background="#FFF">
+			</LinearLayout>
+		
+		    <LinearLayout 
+		    	android:orientation="horizontal"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/gray_grad"
+			    android:gravity="center_vertical|left">
+			    <CheckBox
+			    	android:id="@+id/no_btn"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:layout_margin="12dp"/>
+			    <TextView 
+			    	android:id="@+id/no_btn_label"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="Não"
+			    	android:textSize="22dp"
+			    	android:textColor="#333"/>
+		    </LinearLayout>
 	    </LinearLayout>
-    </LinearLayout>
+	</ScrollView>
 </LinearLayout>
 </ScrollView>

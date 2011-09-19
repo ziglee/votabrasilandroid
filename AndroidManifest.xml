@@ -27,6 +27,7 @@
         </activity>
         <activity android:name=".activity.QuestionActivity"/>
         <activity android:name=".activity.QuestionListActivity"/>
+        <activity android:name=".activity.AboutActivity"/>
 		<activity android:name="com.google.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
     </application>
 </manifest>

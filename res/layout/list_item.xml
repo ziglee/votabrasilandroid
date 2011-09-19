@@ -19,6 +19,11 @@
 		android:background="@drawable/blue_grad"/>
 	<LinearLayout 
 		android:layout_width="fill_parent"
+		android:layout_height="2px"
+		android:background="#000">
+	</LinearLayout>
+	<LinearLayout 
+		android:layout_width="fill_parent"
 		android:layout_height="40dp"
 		android:orientation="horizontal"
 		android:background="@drawable/gray_grad"
@@ -35,6 +40,7 @@
 			android:layout_height="wrap_content"
 			android:textSize="15dp"
 			android:textStyle="bold"
+			android:textColor="#333"
 			android:text="30%"
 			android:layout_marginRight="5dp"/>
 		<ImageView 
@@ -47,6 +53,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:textSize="15dp"
+			android:textColor="#333"
 			android:text="70%"
 			android:textStyle="bold"
 			android:layout_marginRight="5dp"/>
@@ -62,19 +69,36 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textSize="12dp"
+				android:textColor="#666"
 				android:text="321.123 votos"
 				android:singleLine="true"
 				android:gravity="right" 
 			/>
-			<TextView 
-				android:id="@+id/bottom_right"
+			<LinearLayout 
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="12dp"
-				android:text="bottom right"
-				android:singleLine="true"
-				android:gravity="right" 
-			/>
+				android:orientation="horizontal">
+				<TextView 
+					android:id="@+id/bottom_right"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textSize="12dp"
+					android:textColor="#333"
+					android:text="Você votou "
+					android:singleLine="true"
+					android:gravity="right" 
+				/>
+				<TextView 
+					android:id="@+id/bottom_right_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textSize="12dp"
+					android:textColor="#034b77"
+					android:text="SIM"
+					android:singleLine="true"
+					android:gravity="right" 
+				/>
+			</LinearLayout>
 		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>

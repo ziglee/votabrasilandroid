@@ -101,10 +101,13 @@ public class QuestionListActivity extends RoboListActivity {
 	private ImageView voteMenu;
 	@InjectView(R.id.questions_menu)
 	private ImageView questionsMenu;
+	@InjectView(R.id.info_menu)
+	private ImageView infoMenu;
 	
 	private void setupMenu() {
 		voteMenu.setVisibility(View.GONE);
 		questionsMenu.setVisibility(View.GONE);
 		homeMenu.setOnClickListener(MainActivity.getHomeOnClickListener(this));
+		infoMenu.setOnClickListener(MainActivity.getAboutOnClickListener(this));
 	}
 }

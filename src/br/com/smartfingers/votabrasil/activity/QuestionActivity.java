@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import br.com.smartfingers.votabrasil.MyApplication;
@@ -47,17 +48,21 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	@InjectView(R.id.result_layout)
 	private LinearLayout resultLayout;
 	@InjectView(R.id.yes_no_bars)
-	private LinearLayout yesNoBars;
+	private ScrollView yesNoBars;
 	@InjectView(R.id.chart_layout)
 	private LinearLayout chartLayout;
 	@InjectView(R.id.yes_percentage)
 	private TextView yesPercentage;
 	@InjectView(R.id.no_percentage)
 	private TextView noPercentage;
-	@InjectView(R.id.you_voted_txt)
-	private TextView youVotedPercentage;	
-	@InjectView(R.id.total_votes_txt)
-	private TextView totalVotesTxt;
+	@InjectView(R.id.you_voted_prefix)
+	private TextView youVotedPrefix;
+	@InjectView(R.id.you_voted_value)
+	private TextView youVotedValue;
+	@InjectView(R.id.total_votes_suffix)
+	private TextView totalVotesSuffix;
+	@InjectView(R.id.total_votes_value)
+	private TextView totalVotesValue;
 	@InjectView(R.id.yes_btn_label)
 	private TextView yesBtnLabel;
 	@InjectView(R.id.no_btn_label)
@@ -68,6 +73,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	private TextView nextQuestionLabel;
 	
 	@InjectExtra(EXTRA_QUESTION)
+	private Question questionExtra;
+	
 	private Question question;
 	
 	@Inject
@@ -81,6 +88,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.question);
+        
+        question = questionExtra;
         
         pieChartView = new PieChart(this);
         pieChartView.setLayoutParams(new LayoutParams(150, 150));
@@ -97,8 +106,10 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		nextQuestionLabel.setTypeface(MyApplication.fontBold);
 		yesPercentage.setTypeface(MyApplication.fontBold);
     	noPercentage.setTypeface(MyApplication.fontBold);
-    	youVotedPercentage.setTypeface(MyApplication.fontDefault);
-    	totalVotesTxt.setTypeface(MyApplication.fontDefault);
+    	youVotedPrefix.setTypeface(MyApplication.fontDefault);
+    	youVotedValue.setTypeface(MyApplication.fontBold);
+    	totalVotesSuffix.setTypeface(MyApplication.fontDefault);
+    	totalVotesValue.setTypeface(MyApplication.fontBold);
 		
         yesBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -156,7 +167,7 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if(question.answer != null) {
+		if (question.answer != null) {
         	executeAfterPostVote(true, null);
         }
 	}
@@ -215,12 +226,12 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
     	float noPercent = (float) question.no / total;
     	
     	if (question.answer.equalsIgnoreCase("yes")) {
-    		youVotedPercentage.setText("Você votou SIM");
+    		youVotedValue.setText("SIM");
     	} else {
-    		youVotedPercentage.setText("Você votou NÃO");
+    		youVotedValue.setText("NÃO");
     	}
     	
-    	totalVotesTxt.setText(total + " votos");
+    	totalVotesValue.setText(Long.toString(total));
     	yesPercentage.setText("Sim " + nf.format(yesPercent * 100) + "%");
     	noPercentage.setText("Não " + nf.format(noPercent * 100) + "%");
     	
@@ -248,6 +259,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		nextQuestionOver.setVisibility(View.VISIBLE);
 		resultLayout.setVisibility(View.VISIBLE);
 		yesNoBars.setVisibility(View.GONE);
+		
+		getIntent().putExtra(EXTRA_QUESTION, question);
 	}
 	
 	@InjectView(R.id.home_menu)
@@ -256,10 +269,13 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	private ImageView voteMenu;
 	@InjectView(R.id.questions_menu)
 	private ImageView questionsMenu;
+	@InjectView(R.id.info_menu)
+	private ImageView infoMenu;
 	
 	private void setupMenu() {
 		voteMenu.setVisibility(View.GONE);
 		homeMenu.setOnClickListener(MainActivity.getHomeOnClickListener(this));
 		questionsMenu.setOnClickListener(MainActivity.getQuestionsOnClickListener(this));
+		infoMenu.setOnClickListener(MainActivity.getAboutOnClickListener(this));
 	}
 }

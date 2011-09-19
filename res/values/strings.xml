@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vota Brasil</string>
+    <string name="about">Vota Brasil é um aplicativo que lhe permite dar sua opinião sobre os assuntos e discussões que são polêmicos ou de interesse geral da comunidade, desenvolvido por <b>SmartFingers</b>.\n\n
+    	Sua avaliação e comentários sobre o aplicativo no Android Market é muito importante para nós! Basta clicar nos botões abaixo. Desta maneira podemos continuar sempre melhorando o aplicativo.</string>
+    <string name="credits"><b>Página oficial</b>\n
+    	http://smartfingers.com.br\n\n
+    	<b>Feedback</b>\n
+    	dev@smartfingers.com.br\n\n
+    	<b>Android Market</b>\n
+    	https://market.android.com/developer?pub=SmartFingers\n\n
+    	<b>Desenvolvedores</b>\n
+    	Cássio Landim\n
+    	Diogo Bastos\n\n
+    	<b>Designer</b>\n
+    	Adson Rocha\n\n
+    	<b>Todos os direitos reservados</b>\n\n
+    </string>
 </resources>

@@ -39,12 +39,14 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
 		TextView percentNoTxt = (TextView) row.findViewById(R.id.percent_no_txt);
 		TextView topRight = (TextView) row.findViewById(R.id.top_right);
 		TextView bottomRight = (TextView) row.findViewById(R.id.bottom_right);
+		TextView bottomRightValue = (TextView) row.findViewById(R.id.bottom_right_value);
 		
 		center.setTypeface(MyApplication.fontDefault);
 		percentYesTxt.setTypeface(MyApplication.fontBold);
 		percentNoTxt.setTypeface(MyApplication.fontBold);
 		topRight.setTypeface(MyApplication.fontDefault);
 		bottomRight.setTypeface(MyApplication.fontBold);
+		bottomRightValue.setTypeface(MyApplication.fontBold);
 		
 		center.setText(item.title);
 		
@@ -64,18 +66,19 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
 		percentYesTxt.setText(nf.format(yes * 100) + "%");
 		percentNoTxt.setText(nf.format(no * 100) + "%");
 		
-		String bottomStr = "Você votou ";
+		bottomRight.setVisibility(View.VISIBLE);
+		
 		String answer = item.answer;
 		if (answer != null) {
 			if(answer.equalsIgnoreCase("yes")) {
-				bottomStr += "SIM";
+				bottomRightValue.setText("SIM");
 			} else {
-				bottomStr += "NÃO";
+				bottomRightValue.setText("NÃO");
 			}
 		} else {
-			bottomStr = "Você não votou";
+			bottomRightValue.setText("Você não votou");
+			bottomRight.setVisibility(View.GONE);
 		}
-		bottomRight.setText(bottomStr);
 		
 		return row;
 	}
