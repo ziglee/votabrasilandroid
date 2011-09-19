@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="lib/guice-2.0-no_aop.jar"/>
 	<classpathentry kind="lib" path="lib/roboguice-1.1.2.jar" sourcepath="/Users/cassio/.m2/repository/org/roboguice/roboguice/1.1.2/roboguice-1.1.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/GoogleAdMobAdsSdk-4.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/FlurryAgent.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

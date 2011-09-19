@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+import br.com.smartfingers.votabrasil.MyApplication;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.adapter.QuestionsAdapter;
 import br.com.smartfingers.votabrasil.entity.Question;
@@ -18,6 +19,9 @@ import br.com.smartfingers.votabrasil.service.QuestionService;
 import br.com.smartfingers.votabrasil.task.FetchQuestionByIdTask;
 import br.com.smartfingers.votabrasil.task.FetchQuestionsTask;
 
+import com.flurry.android.FlurryAgent;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.google.inject.Inject;
 
 public class QuestionListActivity extends RoboListActivity {
@@ -30,6 +34,8 @@ public class QuestionListActivity extends RoboListActivity {
 	
 	@InjectView(R.id.loading_layout)
 	private LinearLayout loadingLayout;
+	@InjectView(R.id.advertising_banner_view)
+	private LinearLayout adViewContainer;
 	
 	@Inject
 	private QuestionService service;
@@ -38,7 +44,14 @@ public class QuestionListActivity extends RoboListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.questions);
+		
 		setupMenu();
+		
+		AdView adView = new AdView(this, AdSize.BANNER, MyApplication.ADMOB_ID);
+		adViewContainer.addView(adView);
+		adView.loadAd(MyApplication.getAdRequest());
+		
+        FlurryAgent.onPageView();
 	}
 	
 	@Override
@@ -47,6 +60,14 @@ public class QuestionListActivity extends RoboListActivity {
 		getListView().setVisibility(View.GONE);
 		loadingLayout.setVisibility(View.VISIBLE);
 		new FetchQuestionsTask(service, this).execute();
+		FlurryAgent.setUserId(MyApplication.uuid);
+		FlurryAgent.onStartSession(this, MyApplication.FLURRY_ID);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
 	}
 	
 	@Override

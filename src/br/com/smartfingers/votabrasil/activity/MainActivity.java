@@ -23,6 +23,7 @@ import br.com.smartfingers.votabrasil.service.QuestionService;
 import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
 import br.com.smartfingers.votabrasil.task.FetchVotesCountTask;
 
+import com.flurry.android.FlurryAgent;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
 import com.google.inject.Inject;
@@ -85,6 +86,8 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 		AdView adView = new AdView(this, AdSize.BANNER, MyApplication.ADMOB_ID);
 		adViewContainer.addView(adView);
 		adView.loadAd(MyApplication.getAdRequest());
+		
+		FlurryAgent.onPageView();
     }
 	
 	@Override
@@ -92,6 +95,14 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
 		super.onStart();
 		countTxt.setText("Computando votos...");
 		new FetchVotesCountTask(service, this).execute();
+		FlurryAgent.setUserId(MyApplication.uuid);
+		FlurryAgent.onStartSession(this, MyApplication.FLURRY_ID);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
 	}
 
 	public void executeAfterFetchNextQuestion(Question result, Exception exception) {

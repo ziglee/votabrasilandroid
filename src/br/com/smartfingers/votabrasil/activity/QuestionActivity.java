@@ -2,8 +2,10 @@ package br.com.smartfingers.votabrasil.activity;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectExtra;
@@ -17,7 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -32,6 +34,9 @@ import br.com.smartfingers.votabrasil.task.PostVoteTask;
 import br.com.smartfingers.votabrasil.view.PieChart;
 import br.com.smartfingers.votabrasil.view.PieItem;
 
+import com.flurry.android.FlurryAgent;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.google.inject.Inject;
 
 public class QuestionActivity extends RoboActivity implements NextQuestionFetchable {
@@ -42,9 +47,13 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	@InjectView(R.id.content_txt)
 	private TextView contentTxt;
 	@InjectView(R.id.yes_btn)
-	private CheckBox yesBtn;
+	private ImageButton yesBtn;
 	@InjectView(R.id.no_btn)
-	private CheckBox noBtn;
+	private ImageButton noBtn;
+	@InjectView(R.id.yes_check)
+	private ImageView yesCheck;
+	@InjectView(R.id.no_check)
+	private ImageView noCheck;
 	@InjectView(R.id.result_layout)
 	private LinearLayout resultLayout;
 	@InjectView(R.id.yes_no_bars)
@@ -71,6 +80,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	private LinearLayout nextQuestionOver;
 	@InjectView(R.id.next_question_label)
 	private TextView nextQuestionLabel;
+	@InjectView(R.id.advertising_banner_view)
+	private LinearLayout adViewContainer;
 	
 	@InjectExtra(EXTRA_QUESTION)
 	private Question questionExtra;
@@ -121,6 +132,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 					question.yes++;
 				}
 				
+				yesCheck.setVisibility(View.VISIBLE);
+				
 				try{
 					postingVoteDialog = ProgressDialog.show(QuestionActivity.this, "", "Enviando seu voto...");
 				} catch (Exception e) {
@@ -139,6 +152,8 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				} else {
 					question.no++;
 				}
+				
+				noCheck.setVisibility(View.VISIBLE);
 
 				try{
 					postingVoteDialog = ProgressDialog.show(QuestionActivity.this, "", "Enviando seu voto...");
@@ -162,6 +177,12 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		});
         
         setupMenu();
+        
+        AdView adView = new AdView(this, AdSize.BANNER, MyApplication.ADMOB_ID);
+		adViewContainer.addView(adView);
+		adView.loadAd(MyApplication.getAdRequest());
+		
+        FlurryAgent.onPageView();
     }
 	
 	@Override
@@ -170,6 +191,14 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		if (question.answer != null) {
         	executeAfterPostVote(true, null);
         }
+		FlurryAgent.setUserId(MyApplication.uuid);
+		FlurryAgent.onStartSession(this, MyApplication.FLURRY_ID);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
 	}
 	
 	public void executeAfterFetchNextQuestion(Question result, Exception exception) {
@@ -206,6 +235,9 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		} catch (Exception e) {
 			Log.e(LOGTAG, "Error dismissing progress dialog", e);
 		}
+		
+		yesCheck.setVisibility(View.GONE);
+		noCheck.setVisibility(View.GONE);
 		
 		if (!result.booleanValue()) {
 			Toast.makeText(this, "Erro ao computar seu voto", Toast.LENGTH_LONG).show();
@@ -260,7 +292,12 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		resultLayout.setVisibility(View.VISIBLE);
 		yesNoBars.setVisibility(View.GONE);
 		
-		getIntent().putExtra(EXTRA_QUESTION, question);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("id", question.id.toString());
+		params.put("index", question.index.toString());
+		params.put("title", question.title);
+		params.put("answer", question.answer);
+		FlurryAgent.onEvent("Post vote", params);
 	}
 	
 	@InjectView(R.id.home_menu)

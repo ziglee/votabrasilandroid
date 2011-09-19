@@ -16,57 +16,51 @@
 		android:paddingLeft="20dp"
 		android:paddingRight="20dp"
 		android:paddingBottom="10dp"
-		android:background="@drawable/blue_grad"/>
+		android:background="@drawable/dark_blue_grad"/>
 	<LinearLayout 
 		android:layout_width="fill_parent"
-		android:layout_height="2px"
-		android:background="#000">
-	</LinearLayout>
-	<LinearLayout 
-		android:layout_width="fill_parent"
-		android:layout_height="40dp"
+		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:background="@drawable/gray_grad"
+		android:background="@drawable/grad_bar"
 		android:gravity="center_vertical">
 		<ImageView 
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
+			android:layout_width="20dp"
+			android:layout_height="20dp"
 			android:src="@drawable/mini_thumb_yes"
-			android:layout_marginLeft="20dp"
  			android:layout_marginRight="5dp"/>
 		<TextView 
 			android:id="@+id/percent_yes_txt"
 			android:layout_width="40dp"
-			android:layout_height="wrap_content"
-			android:textSize="15dp"
-			android:textStyle="bold"
+			android:layout_height="fill_parent"
+			android:textSize="18dp"
 			android:textColor="#333"
 			android:text="30%"
-			android:layout_marginRight="5dp"/>
+			android:gravity="center_vertical"
+			android:layout_marginRight="7dp"/>
 		<ImageView 
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
+			android:layout_width="20dp"
+			android:layout_height="20dp"
 			android:src="@drawable/mini_thumb_no"
 			android:layout_marginRight="5dp"/>
 		<TextView
 			android:id="@+id/percent_no_txt" 
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:textSize="15dp"
+			android:layout_width="40dp"
+			android:layout_height="fill_parent"
+			android:textSize="18dp"
 			android:textColor="#333"
 			android:text="70%"
-			android:textStyle="bold"
+			android:gravity="center_vertical"
 			android:layout_marginRight="5dp"/>
 		<LinearLayout 
 			android:orientation="vertical"
 			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
+			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:layout_marginRight="10dp"
 			android:gravity="center_vertical|right">
 			<TextView 
 				android:id="@+id/top_right"
-				android:layout_width="wrap_content"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:textSize="12dp"
 				android:textColor="#666"
@@ -75,9 +69,10 @@
 				android:gravity="right" 
 			/>
 			<LinearLayout 
-				android:layout_width="wrap_content"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:gravity="right">
 				<TextView 
 					android:id="@+id/bottom_right"
 					android:layout_width="wrap_content"

@@ -14,6 +14,7 @@ import com.google.inject.Module;
 public class MyApplication extends RoboApplication {
 
 	public static final String ADMOB_ID = "a14e6c37d31557f";
+	public static final String FLURRY_ID = "ZRJW6I6FHIHJIHHIUC28";
 	
 	public static final String PREFERENCES = "PREFERENCES";
 	public static final String PREF_UUID = "UUID";

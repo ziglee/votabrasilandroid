@@ -65,7 +65,7 @@
 			    android:orientation="vertical"
 			    android:padding="20dp"
 			    android:gravity="center"
-				android:background="#CCC"
+				android:background="@drawable/gray_grad"
 				android:layout_weight="1">
 			    <LinearLayout
 			    	android:id="@+id/chart_layout"
@@ -179,11 +179,27 @@
 				    android:layout_height="wrap_content"
 				    android:background="@drawable/gray_grad"
 				    android:gravity="center_vertical|left">
-				    <CheckBox
-				    	android:id="@+id/yes_btn"
-				    	android:layout_width="wrap_content"
+				    <FrameLayout 
+				    	android:layout_width="28dp"
 				    	android:layout_height="wrap_content"
-				    	android:layout_margin="12dp"/>
+				    	android:layout_gravity="center"
+				    	android:layout_margin="12dp">
+				    	<ImageButton
+					    	android:id="@+id/yes_btn"
+					    	android:layout_width="28dp"
+					    	android:layout_height="wrap_content"
+					    	android:background="@null"
+					    	android:src="@drawable/btn_checkbox"
+					    	android:scaleType="fitCenter"
+					    	/>
+					    <ImageView 
+					    	android:visibility="gone"
+					    	android:id="@+id/yes_check"
+					    	android:layout_width="28dp"
+					    	android:layout_height="wrap_content"
+					    	android:scaleType="fitCenter"
+					    	android:src="@drawable/btn_checkmark"/>
+				    </FrameLayout>
 				    <TextView
 				    	android:id="@+id/yes_btn_label" 
 				    	android:layout_width="wrap_content"
@@ -206,11 +222,27 @@
 				    android:layout_height="wrap_content"
 				    android:background="@drawable/gray_grad"
 				    android:gravity="center_vertical|left">
-				    <CheckBox
-				    	android:id="@+id/no_btn"
-				    	android:layout_width="wrap_content"
+				    <FrameLayout 
+				    	android:layout_width="28dp"
 				    	android:layout_height="wrap_content"
-				    	android:layout_margin="12dp"/>
+				    	android:layout_gravity="center"
+				    	android:layout_margin="12dp">
+				    	<ImageButton
+					    	android:id="@+id/no_btn"
+					    	android:layout_width="28dp"
+					    	android:layout_height="wrap_content"
+					    	android:background="@null"
+					    	android:src="@drawable/btn_checkbox"
+					    	android:scaleType="fitCenter"
+					    	/>
+					    <ImageView 
+					    	android:visibility="gone"
+					    	android:id="@+id/no_check"
+					    	android:layout_width="28dp"
+					    	android:layout_height="wrap_content"
+					    	android:scaleType="fitCenter"
+					    	android:src="@drawable/btn_checkmark"/>
+				    </FrameLayout>
 				    <TextView 
 				    	android:id="@+id/no_btn_label"
 				    	android:layout_width="wrap_content"
@@ -221,5 +253,11 @@
 			    </LinearLayout>
 		    </LinearLayout>
 	    </ScrollView>
+	    
+	    <LinearLayout 
+		   android:id="@+id/advertising_banner_view"
+		   android:layout_height="50dp"
+		   android:layout_width="fill_parent"
+		   android:gravity="right"/>
 	</LinearLayout>
 </LinearLayout>
