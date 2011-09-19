@@ -10,15 +10,17 @@ public class FetchNextQuestionTask extends AsyncTask<String, String, Question> {
 
 	private NextQuestionFetchable activity;
 	private Exception exception;
+	private QuestionService service;
 	
-	public FetchNextQuestionTask(NextQuestionFetchable activity) {
+	public FetchNextQuestionTask(QuestionService service, NextQuestionFetchable activity) {
 		this.activity = activity;
+		this.service = service;
 	}
 	
 	@Override
 	protected Question doInBackground(String... uuids) {
 		try {
-			return QuestionService.getNextQuestion(MyApplication.uuid);
+			return service.getNextQuestion(MyApplication.uuid);
 		} catch (Exception e) {
 			exception = e;
 		}

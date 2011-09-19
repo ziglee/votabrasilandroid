@@ -25,8 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.QuestionActivity"
-        	android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".activity.QuestionActivity"/>
         <activity android:name=".activity.QuestionListActivity"/>
 		<activity android:name="com.google.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
     </application>

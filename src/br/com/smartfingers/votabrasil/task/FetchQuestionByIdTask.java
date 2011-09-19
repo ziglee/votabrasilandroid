@@ -10,15 +10,17 @@ public class FetchQuestionByIdTask extends AsyncTask<Long, String, Question> {
 
 	private QuestionListActivity activity;
 	private Exception exception;
+	private QuestionService service;
 	
-	public FetchQuestionByIdTask(QuestionListActivity activity) {
+	public FetchQuestionByIdTask(QuestionService service, QuestionListActivity activity) {
 		this.activity = activity;
+		this.service = service;
 	}
 	
 	@Override
 	protected Question doInBackground(Long... ids) {
 		try {
-			return QuestionService.getQuestionById(ids[0], MyApplication.uuid);
+			return service.getQuestionById(ids[0], MyApplication.uuid);
 		} catch (Exception e) {
 			exception = e;
 		}

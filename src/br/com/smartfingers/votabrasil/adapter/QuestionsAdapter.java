@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import br.com.smartfingers.votabrasil.MyApplication;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
 
@@ -34,6 +35,17 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
 		Question item = getItem(position);
 		
 		TextView center = (TextView) row.findViewById(R.id.center);
+		TextView percentYesTxt = (TextView) row.findViewById(R.id.percent_yes_txt);
+		TextView percentNoTxt = (TextView) row.findViewById(R.id.percent_no_txt);
+		TextView topRight = (TextView) row.findViewById(R.id.top_right);
+		TextView bottomRight = (TextView) row.findViewById(R.id.bottom_right);
+		
+		center.setTypeface(MyApplication.fontDefault);
+		percentYesTxt.setTypeface(MyApplication.fontBold);
+		percentNoTxt.setTypeface(MyApplication.fontBold);
+		topRight.setTypeface(MyApplication.fontDefault);
+		bottomRight.setTypeface(MyApplication.fontBold);
+		
 		center.setText(item.title);
 		
 		long total = item.yes + item.no;
@@ -46,22 +58,19 @@ public class QuestionsAdapter extends ArrayAdapter<Question> {
 
     	NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 		nf.setMaximumFractionDigits(0);
+		nf.setGroupingUsed(true);
 		
-		TextView percentYesTxt = (TextView) row.findViewById(R.id.percent_yes_txt);
+		topRight.setText(nf.format(total) + " votos");
 		percentYesTxt.setText(nf.format(yes * 100) + "%");
-		
-		TextView percentNoTxt = (TextView) row.findViewById(R.id.percent_no_txt);
 		percentNoTxt.setText(nf.format(no * 100) + "%");
-		
-		TextView bottomRight = (TextView) row.findViewById(R.id.bottom_right);
 		
 		String bottomStr = "Você votou ";
 		String answer = item.answer;
 		if (answer != null) {
 			if(answer.equalsIgnoreCase("yes")) {
-				bottomStr += "'Sim'";
+				bottomStr += "SIM";
 			} else {
-				bottomStr += "'Não'";
+				bottomStr += "NÃO";
 			}
 		} else {
 			bottomStr = "Você não votou";

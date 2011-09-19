@@ -10,16 +10,18 @@ public class PostVoteTask extends AsyncTask<String, String, Boolean> {
 	private QuestionActivity activity;
 	private Long questionId;
 	private Exception exception;
+	private QuestionService service;
 	
-	public PostVoteTask(QuestionActivity activity, Long questionId) {
+	public PostVoteTask(QuestionService service, QuestionActivity activity, Long questionId) {
 		this.activity = activity;
 		this.questionId = questionId;
+		this.service = service;
 	}
 	
 	@Override
 	protected Boolean doInBackground(String... params) {
 		try {
-			return QuestionService.postVote(MyApplication.uuid, questionId, params[0]);
+			return service.postVote(MyApplication.uuid, questionId, params[0]);
 		} catch (Exception e) {
 			exception = e;
 		}

@@ -8,15 +8,17 @@ public class FetchVotesCountTask extends AsyncTask<String, String, Long> {
 
 	private MainActivity activity;
 	private Exception exception;
+	private QuestionService service;
 	
-	public FetchVotesCountTask(MainActivity activity) {
+	public FetchVotesCountTask(QuestionService service, MainActivity activity) {
 		this.activity = activity;
+		this.service = service;
 	}
 	
 	@Override
 	protected Long doInBackground(String... params) {
 		try {
-			return QuestionService.getVotesCount();
+			return service.getVotesCount();
 		} catch (Exception e) {
 			exception = e;
 		}

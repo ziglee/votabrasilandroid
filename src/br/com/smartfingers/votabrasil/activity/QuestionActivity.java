@@ -1,6 +1,8 @@
 package br.com.smartfingers.votabrasil.activity;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import roboguice.activity.RoboActivity;
@@ -12,15 +14,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import br.com.smartfingers.votabrasil.MyApplication;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
+import br.com.smartfingers.votabrasil.service.QuestionService;
 import br.com.smartfingers.votabrasil.task.FetchNextQuestionTask;
 import br.com.smartfingers.votabrasil.task.PostVoteTask;
+import br.com.smartfingers.votabrasil.view.PieChart;
+import br.com.smartfingers.votabrasil.view.PieItem;
+
+import com.google.inject.Inject;
 
 public class QuestionActivity extends RoboActivity implements NextQuestionFetchable {
 
@@ -30,17 +41,15 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	@InjectView(R.id.content_txt)
 	private TextView contentTxt;
 	@InjectView(R.id.yes_btn)
-	private Button yesBtn;
+	private CheckBox yesBtn;
 	@InjectView(R.id.no_btn)
-	private Button noBtn;
-	@InjectView(R.id.next_btn)
-	private Button nextBtn;
+	private CheckBox noBtn;
 	@InjectView(R.id.result_layout)
-	private LinearLayout resultFrame;
-	@InjectView(R.id.yes_bar)
-	private LinearLayout yesBar;
-	@InjectView(R.id.no_bar)
-	private LinearLayout noBar;
+	private LinearLayout resultLayout;
+	@InjectView(R.id.yes_no_bars)
+	private LinearLayout yesNoBars;
+	@InjectView(R.id.chart_layout)
+	private LinearLayout chartLayout;
 	@InjectView(R.id.yes_percentage)
 	private TextView yesPercentage;
 	@InjectView(R.id.no_percentage)
@@ -49,21 +58,47 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	private TextView youVotedPercentage;	
 	@InjectView(R.id.total_votes_txt)
 	private TextView totalVotesTxt;
+	@InjectView(R.id.yes_btn_label)
+	private TextView yesBtnLabel;
+	@InjectView(R.id.no_btn_label)
+	private TextView noBtnLabel;
+	@InjectView(R.id.next_question_over)
+	private LinearLayout nextQuestionOver;
+	@InjectView(R.id.next_question_label)
+	private TextView nextQuestionLabel;
 	
 	@InjectExtra(EXTRA_QUESTION)
 	private Question question;
 	
+	@Inject
+	private QuestionService service;
+	
 	private ProgressDialog fetchingNextDialog;
 	private ProgressDialog postingVoteDialog;
+	private PieChart pieChartView;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.question);
         
-        resultFrame.setVisibility(View.GONE);
+        pieChartView = new PieChart(this);
+        pieChartView.setLayoutParams(new LayoutParams(150, 150));
+		pieChartView.setGeometry(150, 150, 5, 5, 5, 5);
+		pieChartView.setSkinParams(1);
+		chartLayout.addView(pieChartView);
+		
+        resultLayout.setVisibility(View.GONE);
 		contentTxt.setText(question.content.toUpperCase());
+		
 		contentTxt.setTypeface(MyApplication.fontDefault);
+		yesBtnLabel.setTypeface(MyApplication.fontBold);
+		noBtnLabel.setTypeface(MyApplication.fontBold);
+		nextQuestionLabel.setTypeface(MyApplication.fontBold);
+		yesPercentage.setTypeface(MyApplication.fontBold);
+    	noPercentage.setTypeface(MyApplication.fontBold);
+    	youVotedPercentage.setTypeface(MyApplication.fontDefault);
+    	totalVotesTxt.setTypeface(MyApplication.fontDefault);
 		
         yesBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -80,7 +115,7 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				} catch (Exception e) {
 					Log.e(LOGTAG, "Error showing progress dialog", e);
 				}
-				new PostVoteTask(QuestionActivity.this, question.id).execute("yes");
+				new PostVoteTask(service, QuestionActivity.this, question.id).execute("yes");
 			}
 		});
         
@@ -99,11 +134,11 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				} catch (Exception e) {
 					Log.e(LOGTAG, "Error showing progress dialog", e);
 				}
-				new PostVoteTask(QuestionActivity.this, question.id).execute("no");
+				new PostVoteTask(service, QuestionActivity.this, question.id).execute("no");
 			}
 		});
 
-        nextBtn.setOnClickListener(new OnClickListener() {
+        nextQuestionOver.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				try{
@@ -111,9 +146,11 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 				} catch (Exception e) {
 					Log.e(LOGTAG, "Error showing progress dialog", e);
 				}
-				new FetchNextQuestionTask(QuestionActivity.this).execute();
+				new FetchNextQuestionTask(service, QuestionActivity.this).execute();
 			}
 		});
+        
+        setupMenu();
     }
 	
 	@Override
@@ -150,6 +187,7 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 	}
 
 	public void executeAfterPostVote(Boolean result, Exception exception) {
+		
 		try {
 			if (postingVoteDialog != null) {
 				postingVoteDialog.dismiss();
@@ -172,27 +210,56 @@ public class QuestionActivity extends RoboActivity implements NextQuestionFetcha
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 		nf.setMaximumFractionDigits(1);
 		
-    	LinearLayout.LayoutParams yesLp = (LinearLayout.LayoutParams) yesBar.getLayoutParams();
-    	LinearLayout.LayoutParams noLp = (LinearLayout.LayoutParams) noBar.getLayoutParams();
-
     	long total = question.yes + question.no;
-    	yesLp.weight = (float) question.yes / total;
-    	noLp.weight = (float) question.no / total;
+    	float yesPercent = (float) question.yes / total;
+    	float noPercent = (float) question.no / total;
     	
     	if (question.answer.equalsIgnoreCase("yes")) {
-    		youVotedPercentage.setText("Você votou 'Sim'");
+    		youVotedPercentage.setText("Você votou SIM");
     	} else {
-    		youVotedPercentage.setText("Você votou 'Não'");
+    		youVotedPercentage.setText("Você votou NÃO");
     	}
     	
     	totalVotesTxt.setText(total + " votos");
+    	yesPercentage.setText("Sim " + nf.format(yesPercent * 100) + "%");
+    	noPercentage.setText("Não " + nf.format(noPercent * 100) + "%");
     	
-    	yesPercentage.setText(nf.format(yesLp.weight * 100) + "%");
-    	noPercentage.setText(nf.format(noLp.weight * 100) + "%");
-    	
-		resultFrame.setVisibility(View.VISIBLE);
-		yesBtn.setVisibility(View.GONE);
-    	noBtn.setVisibility(View.GONE);
-    	nextBtn.setVisibility(View.VISIBLE);
+		List<PieItem> pieData = new ArrayList<PieItem>();
+		
+		PieItem yesPieSlice = new PieItem();
+		yesPieSlice.count = Math.round(yesPercent * 100);
+		yesPieSlice.label = "Sim";
+		yesPieSlice.color = 0xff008500;
+		
+		PieItem noPieSlice = new PieItem();
+		noPieSlice.count = Math.round(noPercent * 100);
+		noPieSlice.label = "Nao";
+		noPieSlice.color = 0xffA60400;
+		
+		pieData.add(yesPieSlice);
+		pieData.add(noPieSlice);
+		
+		pieChartView.setData(pieData, 100);
+		pieChartView.invalidate();
+		
+		Animation bottomEnterAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_enter);
+		nextQuestionOver.startAnimation(bottomEnterAnim);
+		
+		nextQuestionOver.setVisibility(View.VISIBLE);
+		resultLayout.setVisibility(View.VISIBLE);
+		yesNoBars.setVisibility(View.GONE);
+	}
+	
+	@InjectView(R.id.home_menu)
+	private ImageView homeMenu;
+	@InjectView(R.id.vote_menu)
+	private ImageView voteMenu;
+	@InjectView(R.id.questions_menu)
+	private ImageView questionsMenu;
+	
+	private void setupMenu() {
+		voteMenu.setVisibility(View.GONE);
+		homeMenu.setOnClickListener(MainActivity.getHomeOnClickListener(this));
+		questionsMenu.setOnClickListener(MainActivity.getQuestionsOnClickListener(this));
 	}
 }

@@ -7,14 +7,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.adapter.QuestionsAdapter;
 import br.com.smartfingers.votabrasil.entity.Question;
+import br.com.smartfingers.votabrasil.service.QuestionService;
 import br.com.smartfingers.votabrasil.task.FetchQuestionByIdTask;
 import br.com.smartfingers.votabrasil.task.FetchQuestionsTask;
+
+import com.google.inject.Inject;
 
 public class QuestionListActivity extends RoboListActivity {
 
@@ -27,10 +31,14 @@ public class QuestionListActivity extends RoboListActivity {
 	@InjectView(R.id.loading_layout)
 	private LinearLayout loadingLayout;
 	
+	@Inject
+	private QuestionService service;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.questions);
+		setupMenu();
 	}
 	
 	@Override
@@ -38,7 +46,7 @@ public class QuestionListActivity extends RoboListActivity {
 		super.onStart();
 		getListView().setVisibility(View.GONE);
 		loadingLayout.setVisibility(View.VISIBLE);
-		new FetchQuestionsTask(this).execute();
+		new FetchQuestionsTask(service, this).execute();
 	}
 	
 	@Override
@@ -50,7 +58,7 @@ public class QuestionListActivity extends RoboListActivity {
 		}
 		
 		Question question = result[position];
-		new FetchQuestionByIdTask(this).execute(question.id);
+		new FetchQuestionByIdTask(service, this).execute(question.id);
 	}
 	
 	public void executeAfterFetchQuestions(Question[] result, Exception exception) {
@@ -85,5 +93,18 @@ public class QuestionListActivity extends RoboListActivity {
 		Intent intent = new Intent(this, QuestionActivity.class);
 		intent.putExtra(QuestionActivity.EXTRA_QUESTION, question);
 		startActivity(intent);
+	}
+	
+	@InjectView(R.id.home_menu)
+	private ImageView homeMenu;
+	@InjectView(R.id.vote_menu)
+	private ImageView voteMenu;
+	@InjectView(R.id.questions_menu)
+	private ImageView questionsMenu;
+	
+	private void setupMenu() {
+		voteMenu.setVisibility(View.GONE);
+		questionsMenu.setVisibility(View.GONE);
+		homeMenu.setOnClickListener(MainActivity.getHomeOnClickListener(this));
 	}
 }
