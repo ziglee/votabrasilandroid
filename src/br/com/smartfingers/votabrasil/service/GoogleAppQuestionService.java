@@ -16,6 +16,11 @@ public class GoogleAppQuestionService implements QuestionService {
 	public Question getNextQuestion(String uuid) throws JSONException, ClientProtocolException, IOException {
 		String url = BASE_URL + "/question/next/" + uuid;
 		JSONObject object = RestJsonClient.connect(url);
+		
+		if (!object.has("success")) {
+			return null;
+		}
+		
         Question entity = Question.fromResponse(object.getJSONObject("question"));
         
         if (entity.yes == null) {

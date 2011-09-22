@@ -236,10 +236,10 @@
 	    </LinearLayout>
 	</ScrollView>
 	
-	<LinearLayout 
-	   android:id="@+id/advertising_banner_view"
-	   android:layout_height="50dp"
-	   android:layout_width="fill_parent"
-	   android:gravity="center"/>
+	<LinearLayout
+	   	android:id="@+id/advertising_banner_view"
+	   	android:layout_height="50dp"
+	   	android:layout_width="fill_parent"
+	   	android:gravity="center"/>
 </LinearLayout>
 </ScrollView>

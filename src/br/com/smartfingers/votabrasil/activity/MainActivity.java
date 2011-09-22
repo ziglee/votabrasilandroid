@@ -1,5 +1,6 @@
 package br.com.smartfingers.votabrasil.activity;
 
+import java.security.MessageDigest;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -8,6 +9,9 @@ import roboguice.inject.InjectView;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.com.smartfingers.votabrasil.Base64;
 import br.com.smartfingers.votabrasil.MyApplication;
 import br.com.smartfingers.votabrasil.R;
 import br.com.smartfingers.votabrasil.entity.Question;
@@ -63,6 +68,17 @@ public class MainActivity extends RoboActivity implements NextQuestionFetchable 
         countTxt.setTypeface(MyApplication.fontDefault);
         voteLabel.setTypeface(MyApplication.fontDefault);
         listLabel.setTypeface(MyApplication.fontDefault);
+        
+        try {
+			PackageInfo info = getPackageManager().getPackageInfo("br.com.smartfingers.votabrasil", PackageManager.GET_SIGNATURES);
+			for (Signature signature : info.signatures) {
+		        MessageDigest md = MessageDigest.getInstance("SHA");
+		        md.update(signature.toByteArray());
+		        Log.d("Hash Key:", Base64.encodeBytes(md.digest()));
+		   }
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
         
         voteOnClickListener = new OnClickListener() {
 			@Override
